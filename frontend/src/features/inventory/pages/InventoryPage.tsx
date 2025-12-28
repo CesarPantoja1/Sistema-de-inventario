@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react'
 import { Button, Pagination } from '@/shared/components/ui'
 import { useToast } from '@/shared/components/ui/Toast'
+import apiClient from '@/shared/services/api'
 import { useMovements, useInventoryStats, useLowStockAlerts } from '../hooks'
 import {
   InventoryStatsCards,
@@ -71,15 +72,22 @@ export default function InventoryPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('/api/v1/products?page_size=1000', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-          }
-        })
-        if (response.ok) {
-          const data = await response.json()
-          setProducts(data.items || [])
+        // Fetch products in batches since API limits page_size to 100
+        let allProducts: Product[] = []
+        let page = 1
+        let hasMore = true
+        
+        while (hasMore) {
+          const response = await apiClient.get('/api/v1/products', {
+            params: { page, page_size: 100 }
+          })
+          const items = response.data.items || []
+          allProducts = [...allProducts, ...items]
+          hasMore = items.length === 100
+          page++
         }
+        
+        setProducts(allProducts)
       } catch (error) {
         console.error('Error fetching products:', error)
       }

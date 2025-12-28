@@ -1,8 +1,8 @@
 /**
  * Modal para crear movimiento de inventario
  */
-import { useState, useEffect } from 'react'
-import { Modal, Button, Input, Select } from '@/shared/components/ui'
+import { useState, useEffect, useMemo } from 'react'
+import { Modal, Button, Input, Select, SearchableSelect } from '@/shared/components/ui'
 import {
   InventoryMovementCreate,
   MovementType,
@@ -152,13 +152,14 @@ export default function MovementFormModal({
     label: MOVEMENT_REASON_LABELS[reason]
   }))
 
-  const productOptions = [
-    { value: '', label: 'Seleccionar producto...' },
-    ...products.map(p => ({
-      value: p.id.toString(),
-      label: `${p.name} (${p.sku}) - Stock: ${p.stock_current}`
-    }))
-  ]
+  // Product options for SearchableSelect
+  const productOptions = useMemo(() => 
+    products.map(p => ({
+      value: p.id,
+      label: p.name,
+      sublabel: `${p.sku} · Stock: ${p.stock_current}`
+    })), [products]
+  )
 
   const getTypeIcon = () => {
     switch (formData.movement_type) {
@@ -214,21 +215,21 @@ export default function MovementFormModal({
 
         <div className="space-y-4">
           {/* Producto */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Producto *
-            </label>
-            <Select
-              value={formData.product_id?.toString() || ''}
-              onChange={(e) => setFormData(prev => ({
-                ...prev,
-                product_id: e.target.value ? Number(e.target.value) : null
-              }))}
-              options={productOptions}
-              error={errors.product_id}
-              disabled={!!preselectedProduct}
-            />
-          </div>
+          <SearchableSelect
+            label="Producto"
+            options={productOptions}
+            value={formData.product_id}
+            onChange={(value) => setFormData(prev => ({
+              ...prev,
+              product_id: value as number | null
+            }))}
+            placeholder="Buscar producto..."
+            searchPlaceholder="Escribir nombre o SKU..."
+            noResultsText="No se encontraron productos"
+            error={errors.product_id}
+            disabled={!!preselectedProduct}
+            required
+          />
 
           {/* Selected product info */}
           {selectedProduct && (
