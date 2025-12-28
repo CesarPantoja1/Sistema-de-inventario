@@ -5,6 +5,7 @@ import ProtectedRoute from '@/features/auth/components/ProtectedRoute'
 import MainLayout from '@/shared/components/layout/MainLayout'
 import DashboardPage from '@/pages/DashboardPage'
 import { ProductsPage } from '@/features/products/pages'
+import { InventoryPage } from '@/features/inventory/pages'
 
 function Router() {
   return (
@@ -34,6 +35,17 @@ function Router() {
           <ProtectedRoute>
             <MainLayout>
               <ProductsPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/inventory"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <InventoryPage />
             </MainLayout>
           </ProtectedRoute>
         }

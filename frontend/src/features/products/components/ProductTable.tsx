@@ -10,8 +10,7 @@ import {
   TableHeadCell,
   TableEmpty,
   TableLoading,
-  Badge,
-  Button
+  Badge
 } from '@/shared/components/ui'
 import { ProductWithRelations } from '../types'
 
