@@ -108,8 +108,8 @@ class InventoryMovementRepository:
         """Crear un nuevo movimiento de inventario."""
         movement = InventoryMovement(
             product_id=product_id,
-            movement_type=movement_type,
-            reason=reason,
+            movement_type=movement_type.value,  # Usar .value para PostgreSQL enum
+            reason=reason.value,  # Usar .value para PostgreSQL enum
             quantity=quantity,
             stock_before=stock_before,
             stock_after=stock_after,
