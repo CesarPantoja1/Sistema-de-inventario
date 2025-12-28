@@ -1,12 +1,13 @@
 import { BrowserRouter } from 'react-router-dom'
+import { AuthProvider } from '@/features/auth/hooks/useAuth'
 import Router from './router'
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-50">
+      <AuthProvider>
         <Router />
-      </div>
+      </AuthProvider>
     </BrowserRouter>
   )
 }
