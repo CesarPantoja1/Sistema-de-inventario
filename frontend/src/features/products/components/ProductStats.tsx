@@ -15,10 +15,10 @@ export default function ProductStats({
   products,
   total,
   categories,
-  suppliers
+  suppliers: _suppliers
 }: ProductStatsProps) {
   const lowStockCount = products.filter(p => p.is_low_stock).length
-  const activeProducts = products.filter(p => p.is_active).length
+  // const _activeProducts = products.filter(p => p.is_active).length // Para uso futuro
   const totalValue = products.reduce((sum, p) => sum + (p.price * p.stock_current), 0)
 
   const formatCurrency = (value: number) => {
