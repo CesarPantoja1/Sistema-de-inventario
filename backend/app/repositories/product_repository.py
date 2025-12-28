@@ -147,8 +147,22 @@ class ProductRepository:
         self.db.refresh(product)
         return product
 
-    def update_stock(self, product_id: int, quantity: int) -> Optional[Product]:
-        """Actualizar el stock de un producto."""
+    def update_stock(self, product_id: int, new_stock: int) -> Optional[Product]:
+        """Establecer el stock de un producto a un valor específico."""
+        product = self.get_by_id(product_id)
+        if not product:
+            return None
+
+        if new_stock < 0:
+            return None  # No permitir stock negativo
+
+        product.stock_current = new_stock
+        self.db.commit()
+        self.db.refresh(product)
+        return product
+
+    def add_stock(self, product_id: int, quantity: int) -> Optional[Product]:
+        """Agregar cantidad al stock de un producto."""
         product = self.get_by_id(product_id)
         if not product:
             return None
