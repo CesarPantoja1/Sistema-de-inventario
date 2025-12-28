@@ -18,8 +18,8 @@ class ProductBase(BaseModel):
     category_id: Optional[int] = None
     supplier_id: Optional[int] = None
     stock_min: int = Field(default=0, ge=0)
-    cost: Decimal = Field(..., ge=0, decimal_places=2)
-    price: Decimal = Field(..., ge=0, decimal_places=2)
+    cost: Decimal = Field(..., ge=0)
+    price: Decimal = Field(..., ge=0)
 
     @field_validator('sku')
     @classmethod
@@ -41,8 +41,8 @@ class ProductUpdate(BaseModel):
     category_id: Optional[int] = None
     supplier_id: Optional[int] = None
     stock_min: Optional[int] = Field(default=None, ge=0)
-    cost: Optional[Decimal] = Field(default=None, ge=0, decimal_places=2)
-    price: Optional[Decimal] = Field(default=None, ge=0, decimal_places=2)
+    cost: Optional[Decimal] = Field(default=None, ge=0)
+    price: Optional[Decimal] = Field(default=None, ge=0)
     is_active: Optional[bool] = None
 
     @field_validator('sku')
