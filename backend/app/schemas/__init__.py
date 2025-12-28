@@ -32,6 +32,21 @@ from app.schemas.product import (
     ProductListResponse,
     ProductFilter,
 )
+from app.schemas.inventory import (
+    MovementTypeEnum,
+    MovementReasonEnum,
+    InventoryMovementBase,
+    InventoryMovementCreate,
+    InventoryMovementResponse,
+    InventoryMovementList,
+    InventoryMovementFilter,
+    StockAdjustment,
+    BatchStockEntry,
+    BatchStockEntryRequest,
+    LowStockProduct,
+    LowStockAlert,
+    InventoryStats,
+)
 
 __all__ = [
     # User
@@ -61,4 +76,18 @@ __all__ = [
     "ProductWithRelations",
     "ProductListResponse",
     "ProductFilter",
+    # Inventory
+    "MovementTypeEnum",
+    "MovementReasonEnum",
+    "InventoryMovementBase",
+    "InventoryMovementCreate",
+    "InventoryMovementResponse",
+    "InventoryMovementList",
+    "InventoryMovementFilter",
+    "StockAdjustment",
+    "BatchStockEntry",
+    "BatchStockEntryRequest",
+    "LowStockProduct",
+    "LowStockAlert",
+    "InventoryStats",
 ]

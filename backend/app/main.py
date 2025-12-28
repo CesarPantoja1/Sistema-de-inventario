@@ -46,9 +46,10 @@ async def health_check():
 
 
 # Include API routers
-from app.api.v1 import auth, categories, suppliers, products
+from app.api.v1 import auth, categories, suppliers, products, inventory
 
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["Autenticación"])
 app.include_router(categories.router, prefix=f"{settings.API_V1_STR}/categories", tags=["Categorías"])
 app.include_router(suppliers.router, prefix=f"{settings.API_V1_STR}/suppliers", tags=["Proveedores"])
 app.include_router(products.router, prefix=f"{settings.API_V1_STR}/products", tags=["Productos"])
+app.include_router(inventory.router, prefix=f"{settings.API_V1_STR}", tags=["Inventario"])
