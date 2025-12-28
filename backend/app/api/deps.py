@@ -9,6 +9,9 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import decode_access_token
 from app.services.auth_service import AuthService
+from app.services.category_service import CategoryService
+from app.services.supplier_service import SupplierService
+from app.services.product_service import ProductService
 from app.models.user import User
 
 # OAuth2 scheme para autenticación con Bearer token
@@ -87,3 +90,18 @@ async def get_current_active_admin(
             detail="No tienes permisos suficientes"
         )
     return current_user
+
+
+def get_category_service(db: Session = Depends(get_db)) -> CategoryService:
+    """Dependency para obtener el servicio de categorías."""
+    return CategoryService(db)
+
+
+def get_supplier_service(db: Session = Depends(get_db)) -> SupplierService:
+    """Dependency para obtener el servicio de proveedores."""
+    return SupplierService(db)
+
+
+def get_product_service(db: Session = Depends(get_db)) -> ProductService:
+    """Dependency para obtener el servicio de productos."""
+    return ProductService(db)
