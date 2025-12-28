@@ -33,7 +33,7 @@ interface UseProductsReturn {
   fetchProducts: () => Promise<void>
   createProduct: (data: ProductCreate) => Promise<boolean>
   updateProduct: (id: number, data: ProductUpdate) => Promise<boolean>
-  updateStock: (id: number, quantity: number) => Promise<boolean>
+  updateStock: (id: number, quantity: number, reason?: string, notes?: string) => Promise<boolean>
   deleteProduct: (id: number) => Promise<boolean>
 }
 
@@ -98,10 +98,10 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsReturn
     }
   }, [fetchProducts])
 
-  const updateStock = useCallback(async (id: number, quantity: number): Promise<boolean> => {
+  const updateStock = useCallback(async (id: number, quantity: number, reason?: string, notes?: string): Promise<boolean> => {
     try {
       setError(null)
-      await productService.updateStock(id, quantity)
+      await productService.updateStock(id, quantity, reason, notes)
       await fetchProducts()
       return true
     } catch (err) {

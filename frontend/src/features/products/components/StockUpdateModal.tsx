@@ -8,7 +8,7 @@ import { ProductWithRelations } from '../types'
 interface StockUpdateModalProps {
   isOpen: boolean
   onClose: () => void
-  onSubmit: (quantity: number) => Promise<boolean>
+  onSubmit: (quantity: number, reason?: string, notes?: string) => Promise<boolean>
   product: ProductWithRelations | null
 }
 
@@ -21,12 +21,14 @@ export default function StockUpdateModal({
   const [loading, setLoading] = useState(false)
   const [quantity, setQuantity] = useState('')
   const [operation, setOperation] = useState<'add' | 'remove' | 'set'>('add')
+  const [notes, setNotes] = useState('')
   const [error, setError] = useState('')
 
   useEffect(() => {
     if (isOpen) {
       setQuantity('')
       setOperation('add')
+      setNotes('')
       setError('')
     }
   }, [isOpen])
@@ -66,8 +68,19 @@ export default function StockUpdateModal({
     // Calcular la diferencia para el API
     const currentStock = product?.stock_current || 0
     const difference = newStock - currentStock
+    
+    // Determinar la razón según la operación
+    let reason: string | undefined
+    if (operation === 'add') {
+      reason = 'purchase'
+    } else if (operation === 'remove') {
+      reason = 'sale'
+    } else {
+      // Para "set", determinamos si es entrada o salida
+      reason = difference > 0 ? 'purchase' : 'sale'
+    }
 
-    const success = await onSubmit(difference)
+    const success = await onSubmit(difference, reason, notes || undefined)
     setLoading(false)
 
     if (success) {
@@ -163,6 +176,20 @@ export default function StockUpdateModal({
           error={error}
           placeholder="0"
         />
+
+        {/* Notas (opcional) */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Notas (opcional)
+          </label>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Razón del ajuste de stock..."
+            className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+            rows={2}
+          />
+        </div>
 
         {/* Preview del nuevo stock */}
         {quantity && (
