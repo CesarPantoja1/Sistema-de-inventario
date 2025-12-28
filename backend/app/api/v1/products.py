@@ -4,6 +4,7 @@ Endpoints de productos.
 from typing import Optional
 from decimal import Decimal
 from fastapi import APIRouter, Depends, status, Query
+from pydantic import BaseModel
 
 from app.schemas.product import (
     ProductCreate,
@@ -14,10 +15,20 @@ from app.schemas.product import (
     ProductFilter,
 )
 from app.services.product_service import ProductService
-from app.api.deps import get_product_service, get_current_user
+from app.services.inventory_service import InventoryService
+from app.api.deps import get_product_service, get_inventory_service, get_current_user
 from app.models.user import User
+from app.schemas.inventory import MovementReasonEnum
 
 router = APIRouter()
+
+
+# Schema para actualización de stock con razón
+class StockUpdateRequest(BaseModel):
+    """Request para actualización de stock."""
+    quantity: int
+    reason: Optional[str] = None
+    notes: Optional[str] = None
 
 
 @router.get("", response_model=ProductListResponse)
@@ -139,20 +150,49 @@ def update_product(
     return product_service.update(product_id, product_data)
 
 
-@router.patch("/{product_id}/stock", response_model=ProductResponse)
+@router.patch("/{product_id}/stock", response_model=ProductWithRelations)
 def update_product_stock(
     product_id: int,
-    quantity: int = Query(..., description="Cantidad a agregar (positivo) o quitar (negativo)"),
+    data: StockUpdateRequest,
     product_service: ProductService = Depends(get_product_service),
+    inventory_service: InventoryService = Depends(get_inventory_service),
     current_user: User = Depends(get_current_user)
 ):
     """
-    Actualizar el stock de un producto.
+    Actualizar el stock de un producto creando un movimiento de inventario.
 
     - **product_id**: ID del producto
     - **quantity**: Cantidad a agregar (positivo) o quitar (negativo)
+    - **reason**: Razón del ajuste (opcional, default: adjustment)
+    - **notes**: Notas adicionales (opcional)
     """
-    return product_service.update_stock(product_id, quantity)
+    # Determinar el tipo de movimiento y razón según la cantidad
+    if data.quantity > 0:
+        # Entrada de stock
+        reason = MovementReasonEnum.PURCHASE if data.reason == 'purchase' else MovementReasonEnum.RETURN
+        movement = inventory_service.add_stock(
+            product_id=product_id,
+            quantity=data.quantity,
+            reason=reason,
+            notes=data.notes or "Ajuste desde módulo de productos",
+            user_id=current_user.id
+        )
+    elif data.quantity < 0:
+        # Salida de stock
+        reason = MovementReasonEnum.SALE if data.reason == 'sale' else MovementReasonEnum.DAMAGED
+        movement = inventory_service.remove_stock(
+            product_id=product_id,
+            quantity=abs(data.quantity),
+            reason=reason,
+            notes=data.notes or "Ajuste desde módulo de productos",
+            user_id=current_user.id
+        )
+    else:
+        # Cantidad 0, no hacer nada
+        pass
+    
+    # Retornar producto actualizado con relaciones
+    return product_service.get_by_id(product_id, with_relations=True)
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)

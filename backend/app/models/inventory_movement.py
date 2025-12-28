@@ -55,14 +55,14 @@ class InventoryMovement(Base):
         index=True
     )
     
-    # Tipo y razón del movimiento
+    # Tipo y razón del movimiento (usamos String para compatibilidad con enum PostgreSQL en minúsculas)
     movement_type = Column(
-        Enum(MovementType, name="movement_type_enum", create_constraint=True),
+        String(20),
         nullable=False,
         index=True
     )
     reason = Column(
-        Enum(MovementReason, name="movement_reason_enum", create_constraint=True),
+        String(30),
         nullable=False
     )
     

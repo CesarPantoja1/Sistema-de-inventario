@@ -74,13 +74,12 @@ class ProductService {
   }
 
   /**
-   * Actualizar stock de un producto
+   * Actualizar stock de un producto (crea movimiento de inventario)
    */
-  async updateStock(id: number, quantity: number): Promise<Product> {
-    const response = await apiClient.patch<Product>(
+  async updateStock(id: number, quantity: number, reason?: string, notes?: string): Promise<ProductWithRelations> {
+    const response = await apiClient.patch<ProductWithRelations>(
       `${this.basePath}/${id}/stock`,
-      null,
-      { params: { quantity } }
+      { quantity, reason, notes }
     )
     return response.data
   }

@@ -12,6 +12,7 @@ from app.services.auth_service import AuthService
 from app.services.category_service import CategoryService
 from app.services.supplier_service import SupplierService
 from app.services.product_service import ProductService
+from app.services.inventory_service import InventoryService
 from app.models.user import User
 
 # OAuth2 scheme para autenticación con Bearer token
@@ -105,3 +106,8 @@ def get_supplier_service(db: Session = Depends(get_db)) -> SupplierService:
 def get_product_service(db: Session = Depends(get_db)) -> ProductService:
     """Dependency para obtener el servicio de productos."""
     return ProductService(db)
+
+
+def get_inventory_service(db: Session = Depends(get_db)) -> InventoryService:
+    """Dependency para obtener el servicio de inventario."""
+    return InventoryService(db)

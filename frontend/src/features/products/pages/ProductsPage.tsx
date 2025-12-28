@@ -88,10 +88,10 @@ export default function ProductsPage() {
     }
   }
 
-  const handleStockSubmit = async (quantity: number): Promise<boolean> => {
+  const handleStockSubmit = async (quantity: number, reason?: string, notes?: string): Promise<boolean> => {
     if (!selectedProduct) return false
     try {
-      await updateStock(selectedProduct.id, quantity)
+      await updateStock(selectedProduct.id, quantity, reason, notes)
       toast.success('Stock actualizado correctamente')
       return true
     } catch {
