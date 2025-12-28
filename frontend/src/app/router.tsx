@@ -2,7 +2,9 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import LoginPage from '@/features/auth/pages/LoginPage'
 import RegisterPage from '@/features/auth/pages/RegisterPage'
 import ProtectedRoute from '@/features/auth/components/ProtectedRoute'
+import MainLayout from '@/shared/components/layout/MainLayout'
 import DashboardPage from '@/pages/DashboardPage'
+import { ProductsPage } from '@/features/products/pages'
 
 function Router() {
   return (
@@ -14,12 +16,25 @@ function Router() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
-      {/* Rutas protegidas */}
+      {/* Rutas protegidas con layout */}
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <DashboardPage />
+            <MainLayout>
+              <DashboardPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/products"
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <ProductsPage />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
